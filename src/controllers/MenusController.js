@@ -4,7 +4,7 @@ import { Op } from "sequelize";
 import iterator from "../utils/iterator";
 
 class MenusController {
-  static async getMenus(req, res) {
+  static async findAll(req, res) {
     try {
       const menus = await db.vnd_ussd_states.findAndCountAll({
         order: ["state_id"],
@@ -15,7 +15,7 @@ class MenusController {
           },
         ],
       });
-      if (menus.length < 1) return onError(res, 404, "menus not found");
+      if (menus.rows.length < 1) return onError(res, 404, "menus not found");
       return onSuccess(res, 200, "Menus Successfully found", menus);
     } catch (err) {
       return onServerError(res);
@@ -96,16 +96,6 @@ class MenusController {
     }
   }
 
-  static async createChoice(req, res) {
-    try {
-      const choice = await db.vnd_ussd_choices.create(req.body);
-      if (!choice) return onServerError(res);
-      return onSuccess(res, 201, "Choice Created Successfully", choice);
-    } catch (err) {
-      return onServerError(res);
-    }
-  }
-
   static async findOne(req, res) {
     try {
       const { state_id } = req.params;
@@ -130,6 +120,12 @@ class MenusController {
       const { state_id } = req.params;
       const menu = await db.vnd_ussd_states.findOne({
         where: { state_id },
+        include: [
+          {
+            model: db.vnd_ussd_choices,
+            as: "choices",
+          },
+        ],
       });
       if (!menu) return onError(res, 404, "menu not found");
       menu.update(req.body);
@@ -149,32 +145,6 @@ class MenusController {
       menu.destroy();
       return onSuccess(res, 200, "Menu Successfully deleted");
     } catch (err) {
-      return onServerError(res);
-    }
-  }
-
-  static async updateOnDrop(req, res) {
-    try {
-      const { changes } = req.body;
-      for (const change of changes) {
-        const record_ids = iterator(change.children, "record_id");
-        db.vnd_ussd_choices.update(
-          {
-            ussd_state: change.state_id,
-            lastupdated: new Date(),
-          },
-          {
-            where: {
-              record_id: {
-                [Op.in]: record_ids,
-              },
-            },
-          }
-        );
-      }
-      return onSuccess(res, 200, "Updated Successfully");
-    } catch (err) {
-      console.log(err);
       return onServerError(res);
     }
   }

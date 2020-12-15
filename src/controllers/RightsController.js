@@ -17,7 +17,6 @@ class RightsController {
       if (rights.length < 1) return onError(res, 404, "rights not found");
       return onSuccess(res, 200, "Rights Successfully found", rights);
     } catch (err) {
-      console.log(err);
       return onServerError(res);
     }
   }

@@ -26,9 +26,10 @@ class Validations {
         fxn_type: joi
           .string()
           .required()
-          .valid("api_triggering", "non_referencing", "referencing"),
+          .valid("api_triggering", "non_referencing", "referencing")
+          .allow(null),
         default_resp_code: joi.number().required(),
-        referenced_fields: joi.string().required(),
+        referenced_fields: joi.string().required().allow(""),
         status: joi.string().required().valid("failed", "successful"),
       });
       const { error } = validateSchema.validate(req.body);
@@ -91,21 +92,6 @@ class Validations {
         ussd_new_state: joi.string().required(),
         status: joi.string().required().valid("Active", "Inactive"),
         lastupdated: joi.date().required(),
-      });
-      const { error } = validateSchema.validate(req.body);
-      if (error)
-        return onError(res, 400, error.details[0].message.split('"').join(""));
-      return next();
-    } catch (err) {
-      return onServerError(res);
-    }
-  }
-
-  drop(req, res, next) {
-    try {
-      const validateSchema = joi.object({
-        state_id: joi.number().required(),
-        child_state_id: joi.number().required(),
       });
       const { error } = validateSchema.validate(req.body);
       if (error)
