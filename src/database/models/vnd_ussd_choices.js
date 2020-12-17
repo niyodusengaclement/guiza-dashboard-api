@@ -52,6 +52,7 @@ module.exports = function (sequelize, DataTypes) {
   vnd_ussd_choices.associate = function (models) {
     vnd_ussd_choices.belongsTo(models.vnd_ussd_states, {
       foreignKey: "ussd_state",
+      as: "current_state",
     });
   };
   return vnd_ussd_choices;

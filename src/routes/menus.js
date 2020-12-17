@@ -9,7 +9,7 @@ const routes = express.Router();
 routes.get("/rights", auth.checkToken, RightsController.getAccessRights);
 routes
   .route("/")
-  .get(auth.checkToken, MenusController.getMenus)
+  .get(auth.checkToken, MenusController.findAll)
   .post(auth.checkToken, MenuValidations.menu, MenusController.create);
 routes
   .route("/:state_id")
@@ -18,23 +18,10 @@ routes
   .delete(auth.checkToken, MenusController.delete);
 
 routes.post(
-  "/choice",
-  auth.checkToken,
-  MenuValidations.choice,
-  MenusController.createChoice
-);
-routes.post(
   "/child",
   auth.checkToken,
   MenuValidations.child,
   MenusController.createChild
-);
-
-routes.patch(
-  "/drop",
-  auth.checkToken,
-  // MenuValidations.drop,
-  MenusController.updateOnDrop
 );
 
 export default routes;
