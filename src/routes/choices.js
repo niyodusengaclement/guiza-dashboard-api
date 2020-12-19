@@ -20,7 +20,7 @@ routes
   .delete(auth.checkToken, ChoicesController.delete);
 
 routes.patch(
-  "/drop",
+  "/drop/:ussd_new_state",
   auth.checkToken,
   ChoicesController.updateOnDrop
 );
