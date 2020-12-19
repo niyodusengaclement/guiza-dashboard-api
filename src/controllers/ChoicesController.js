@@ -1,12 +1,19 @@
 import { onError, onServerError, onSuccess } from "../utils/response";
 import db from "../database/models";
 import { Op } from "sequelize";
-import iterator from "../utils/iterator";
 
 class ChoicesController {
   static async findAll(req, res) {
     try {
-      const choices = await db.vnd_ussd_choices.findAll();
+      const choices = await db.vnd_ussd_choices.findAll({
+        where: { status: "Active", ussd_choice: { [Op.not]: 0 } },
+        include: [
+          {
+            model: db.vnd_ussd_states,
+            as: "current_state",
+          },
+        ],
+      });
       if (choices.length < 1) return onError(res, 404, "Choices not found");
       return onSuccess(res, 200, "Choices Successfully found", choices);
     } catch (err) {
@@ -82,22 +89,19 @@ class ChoicesController {
   static async updateOnDrop(req, res) {
     try {
       const { changes } = req.body;
+      const { ussd_new_state } = req.params;
       for (const change of changes) {
-        const record_ids = iterator(change.children, "record_id");
-        // console.log(record_ids);
-        // db.vnd_ussd_choices.update(
-        //   {
-        //     ussd_state: change.state_id,
-        //     lastupdated: new Date(),
-        //   },
-        //   {
-        //     where: {
-        //       record_id: {
-        //         [Op.in]: record_ids,
-        //       },
-        //     },
-        //   }
-        // );
+        db.vnd_ussd_choices.update(
+          {
+            ussd_state: ussd_new_state,
+            lastupdated: new Date(),
+          },
+          {
+            where: {
+              record_id: change.record_id,
+            },
+          }
+        );
       }
       return onSuccess(res, 200, "Updated Successfully");
     } catch (err) {
