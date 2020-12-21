@@ -9,7 +9,7 @@ class UsersController {
       const { username, password } = req.body;
       if (!username || !password)
         return onError(res, 400, "Fill all required fields please");
-      const user = await db.sm_user_accounts.findOne({
+      const user = await db.user_accounts.findOne({
         where: { username },
       });
       if (!user) {
@@ -21,25 +21,26 @@ class UsersController {
       const token = await helpers.tokenGenerator(user);
       return onSuccess(res, 200, "Login Successfully", token);
     } catch (err) {
-      return onServerError(res);
+      return onServerError(res, err);
     }
   }
+
   static async register(req, res) {
     try {
       const {
         username,
         password: inputPassword,
-        role,
-        status,
-        full_name,
+        name,
+        access_level,
+        org_id,
       } = req.body;
       const password = await helpers.hashPassword(inputPassword);
-      const user = await db.sm_user_accounts.create({
+      const user = await db.user_accounts.create({
         username,
         password,
-        role,
-        status,
-        full_name,
+        name,
+        access_level,
+        org_id,
       });
       if (!user) {
         return onServerError(res);
@@ -47,7 +48,7 @@ class UsersController {
       const token = await helpers.tokenGenerator(user);
       return onSuccess(res, 201, "Created Successfully", token);
     } catch (err) {
-      return onServerError(res);
+      return onServerError(res, err);
     }
   }
 }

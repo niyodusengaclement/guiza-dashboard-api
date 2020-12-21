@@ -17,6 +17,10 @@ module.exports = function(sequelize, DataTypes) {
     allowed_access: {
       type: DataTypes.STRING(255),
       allowNull: false
+    },
+    default_menu: {
+      type: DataTypes.STRING(255),
+      allowNull: false
     }
   }, {
     sequelize,

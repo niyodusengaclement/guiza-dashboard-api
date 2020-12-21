@@ -6,13 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --require babel-core/register --require babel-polyfill ./src/server.js",
-    "start:prod": "npm run drop:db && npm run migrate && npm run seed && node --require babel-core/register --require babel-polyfill ./src/server.js",
-    "dev": "nodemon --require babel-core/register --require babel-polyfill ./src/server.js",
-    "seed": "sequelize db:seed:all",
-    "seed:undo": "sequelize db:seed:undo:all",
+    "start:prod": "node --require babel-core/register --require babel-polyfill ./src/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon --require babel-core/register --require babel-polyfill ./src/server.js",
+    "generator": "node_modules/.bin/sequelize-auto -o './src/database/models' -d core_gwiza_stagging -h localhost -u root -e mysql",
     "migrate": "sequelize db:migrate",
-    "migrate:undo": "sequelize db:migrate:undo",
-    "drop:db": "sequelize db:migrate:undo:all"
+    "migrate:undo": "sequelize db:migrate:undo"
   },
   "repository": {
     "type": "git",
@@ -20,9 +18,9 @@
   },
   "author": "NIYODUSENGA Clement",
   "license": "ISC",
- 
   "homepage": "",
   "dependencies": {
+    "@google-cloud/logging-winston": "^4.0.4",
     "babel-core": "^6.26.3",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
@@ -32,17 +30,24 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
     "helmet": "^4.1.1",
     "joi": "^17.2.1",
+    "joi-phone-number": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.4.13",
+    "read-excel-file": "^5.0.0",
     "sequelize": "^6.3.5",
     "sequelize-auto": "^0.7.5",
-    "sequelize-cli": "^6.2.0"
+    "throng": "^5.0.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "nodemon": "^2.0.4"
+    "babel-cli": "^6.18.0",
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.4",
+    "sequelize-cli": "^6.2.0"
   }
 }

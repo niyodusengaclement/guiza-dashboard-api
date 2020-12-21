@@ -12,7 +12,7 @@ class Validations {
         return onError(res, 400, error.details[0].message.split('"').join(""));
       return next();
     } catch (err) {
-      return onServerError(res);
+      return onServerError(res, err);
     }
   }
 
@@ -21,16 +21,30 @@ class Validations {
       const validateSchema = joi.object({
         username: joi.string().required().min(4),
         password: joi.string().required().min(6),
-        role: joi.string().required().max(4),
-        status: joi.string().required().valid("Active", "Suspended", "Closed"),
-        full_name: joi.string().required(),
+        name: joi.string().required(),
+        access_level: joi.string().required(),
+        org_id: joi.number().required(),
       });
       const { error } = validateSchema.validate(req.body);
       if (error)
         return onError(res, 400, error.details[0].message.split('"').join(""));
       return next();
     } catch (err) {
-      return onServerError(res);
+      return onServerError(res, err);
+    }
+  }
+  admin(req, res, next) {
+    try {
+      const validateSchema = joi.object({
+        group_id: joi.number().required(),
+        phone_number: joi.string().required(),
+      });
+      const { error } = validateSchema.validate(req.body);
+      if (error)
+        return onError(res, 400, error.details[0].message.split('"').join(""));
+      return next();
+    } catch (err) {
+      return onServerError(res, err);
     }
   }
 }

@@ -3,17 +3,17 @@ import bcrypt from "bcrypt";
 
 class Helpers {
   constructor() {
-    this.options = { expiresIn: "365d" };
+    this.options = { expiresIn: "1d" };
   }
 
   tokenGenerator(info) {
     try {
       this.payload = {
-        full_name: info.full_name,
+        name: info.name,
         username: info.username,
-        role: info.role,
-        status: info.status,
         id: info.id,
+        access_level: info.access_level,
+        org_id: info.org_id,
       };
       const secret = process.env.JWT_TOKEN;
       const token = jwt.sign(this.payload, secret, this.options);

@@ -7,11 +7,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true
     },
-    menu_type: {
-      type: DataTypes.ENUM('single','multilevel'),
-      allowNull: false,
-      defaultValue: "single"
-    },
     menu_title: {
       type: DataTypes.STRING(255),
       allowNull: true
@@ -22,19 +17,21 @@ module.exports = function(sequelize, DataTypes) {
     },
     parent_option: {
       type: DataTypes.TINYINT,
-      allowNull: true
+      allowNull: true,
+      defaultValue: 0
     },
     rank: {
       type: DataTypes.TINYINT,
       allowNull: true
     },
-    on_menu: {
-      type: DataTypes.ENUM('Yes','No'),
-      allowNull: false
-    },
     css: {
       type: DataTypes.STRING(255),
       allowNull: true
+    },
+    on_menu: {
+      type: DataTypes.ENUM('Yes','No'),
+      allowNull: false,
+      defaultValue: "Yes"
     }
   }, {
     sequelize,

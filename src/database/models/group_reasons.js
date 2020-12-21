@@ -1,27 +1,31 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('vnd_api_responses', {
-    record_id: {
+  return sequelize.define('group_reasons', {
+    group_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false
+    },
+    reason_id: {
       autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true
     },
-    code: {
-      type: DataTypes.INTEGER,
+    reason_type: {
+      type: DataTypes.STRING(255),
       allowNull: false
     },
-    text_en: {
-      type: DataTypes.TEXT,
+    reason_description: {
+      type: DataTypes.STRING(255),
       allowNull: false
     },
-    text_kin: {
-      type: DataTypes.TEXT,
+    reason_amount: {
+      type: DataTypes.DECIMAL(15,4),
       allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'vnd_api_responses',
+    tableName: 'group_reasons',
     timestamps: false,
     indexes: [
       {
@@ -29,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "record_id" },
+          { name: "reason_id" },
         ]
       },
     ]

@@ -1,39 +1,50 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('vnd_log_session_input_values', {
-    record_id: {
-      autoIncrement: true,
+  return sequelize.define('sm_geolocation', {
+    village_id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true
     },
-    date: {
-      type: DataTypes.DATE,
-      allowNull: false
-    },
-    session_id: {
+    village_name: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    state_id: {
+    cell_id: {
+      type: DataTypes.BIGINT,
+      allowNull: false
+    },
+    cell_name: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    telephone_number: {
-      type: DataTypes.STRING(15),
+    sector_id: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
-    input_name: {
+    sector_name: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    input_value: {
+    district_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    district_name: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    province_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    province_name: {
       type: DataTypes.STRING(255),
       allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'vnd_log_session_input_values',
+    tableName: 'sm_geolocation',
     timestamps: false,
     indexes: [
       {
@@ -41,7 +52,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "record_id" },
+          { name: "village_id" },
         ]
       },
     ]

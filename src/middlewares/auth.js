@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { onError } from '../utils/response';
-import db from '../database/models';
 
 class Authentication {
   async checkToken(req, res, next) {
