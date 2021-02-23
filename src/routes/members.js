@@ -1,6 +1,7 @@
 import express from "express";
 import MembersController from "../controllers/MembersController";
 import auth from "../middlewares/auth";
+import excelChecker from "../middlewares/excelChecker";
 import MembersValidations from "../validations/MembersValidations";
 
 const routes = express.Router();
@@ -23,6 +24,7 @@ routes.get("/search", auth.checkToken, MembersController.search);
 routes.post(
   "/upload/:group_id([0-9]{1,10})",
   auth.checkToken,
+  excelChecker,
   MembersController.uploadMembers
 );
 export default routes;

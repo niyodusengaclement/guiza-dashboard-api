@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import fs from "fs";
 
 class Helpers {
   constructor() {
@@ -48,6 +49,15 @@ class Helpers {
   generateUniqueId() {
     const date = new Date();
     return `${date.getTime()}`;
+  }
+  deleteTmpFile(filePath) {
+    if (filePath) {
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          // console.log("error occured", err);
+        }
+      });
+    }
   }
 }
 export default new Helpers();
