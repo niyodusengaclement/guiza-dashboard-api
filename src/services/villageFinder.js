@@ -8,22 +8,22 @@ export default async (payload) => {
         [Op.and]: [
           {
             district_name: {
-              [Op.substring]: payload.district_name,
+              [Op.substring]: payload.district,
             },
           },
           {
             sector_name: {
-              [Op.substring]: payload.sector_name,
+              [Op.substring]: payload.sector,
             },
           },
           {
             cell_name: {
-              [Op.substring]: payload.cell_name,
+              [Op.substring]: payload.cell,
             },
           },
           {
             village_name: {
-              [Op.substring]: payload.village_name,
+              [Op.substring]: payload.village,
             },
           },
         ],

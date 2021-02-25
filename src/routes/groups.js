@@ -1,6 +1,7 @@
 import express from "express";
 import GroupsController from "../controllers/GroupsController";
 import auth from "../middlewares/auth";
+import excelChecker from "../middlewares/excelChecker";
 import GroupValidations from "../validations/GroupValidations";
 
 const routes = express.Router();
@@ -17,5 +18,10 @@ routes
   .delete(auth.checkToken, GroupsController.delete);
 
 routes.get("/search", auth.checkToken, GroupsController.search);
-routes.post("/upload", auth.checkToken, GroupsController.uploadGroupInfo);
+routes.post(
+  "/upload",
+  auth.checkToken,
+  excelChecker,
+  GroupsController.uploadGroupInfo
+);
 export default routes;

@@ -1,4 +1,4 @@
-// import logger from "./logger";
+import logger from "./logger";
 
 export const onSuccess = (res, status_code, message, data) => {
   return res.status(status_code).json({
@@ -16,14 +16,14 @@ export const onError = (res, status_code, error) => {
 };
 
 export const onServerError = (res, error) => {
-//   if (error) {
-//     const { message, name, fileName } = error;
-//     logger.error({
-//       name,
-//       message: `[${fileName}] ${message}`,
-//       fileName,
-//     });
-//   }
+  if (error) {
+    const { name, fileName, stack } = error;
+    logger.error({
+      name,
+      message: fileName ? `[${fileName}] ${stack}` : stack,
+      fileName,
+    });
+  }
   const err =
     error && error.fileName
       ? {
@@ -35,5 +35,17 @@ export const onServerError = (res, error) => {
   return res.status(err.status).json({
     status: err.status,
     error: err.msg,
+  });
+};
+
+export const logMultipleErrors = (errors, fileName) => {
+  errors.map((err) => {
+    if (err) {
+      logger.error({
+        name: err.name,
+        message: `[${fileName}] ${err.stack}`,
+        fileName,
+      });
+    }
   });
 };

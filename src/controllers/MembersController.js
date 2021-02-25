@@ -144,19 +144,6 @@ class membersController {
   static async uploadMembers(req, res) {
     try {
       const { group_id } = req.params;
-
-      if (!req.files || !req.files.members_file)
-        return onError(res, 400, "No file selected");
-      const arr = req.files.members_file.name.split(".");
-      const lastIndex = arr.length - 1;
-      const extension = arr[lastIndex];
-      if (extension !== "xlsx" && extension !== "xlsm")
-        return onError(
-          res,
-          400,
-          "File should be an excel with [xlsx or xlsm] extension"
-        );
-
       const { rows, errors } = await readXlsxFile(
         req.files.members_file.tempFilePath,
         { schema: MembersValidations.fileColumns() }
