@@ -18,6 +18,10 @@ routes
   .delete(auth.checkToken, GroupsController.delete);
 
 routes.get("/search", auth.checkToken, GroupsController.search);
+routes
+  .route("/migrate")
+  .get(auth.checkToken, GroupsController.migrate)
+  .post(auth.checkToken, GroupsController.updateMigratedGroups);
 routes.post(
   "/upload",
   auth.checkToken,

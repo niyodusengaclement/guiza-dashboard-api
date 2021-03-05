@@ -147,6 +147,10 @@ class GroupsController {
         where: { group_id },
         include: [
           {
+            model: db.Admin,
+            as: "admins",
+          },
+          {
             model: db.group_members,
             as: "members",
           },
@@ -179,25 +183,56 @@ class GroupsController {
     }
   }
 
+  static async migrate(req, res) {
+    try {
+      const groups = await db.group_meta.findAll({
+        where: { group_status: "new" },
+        order: [["group_id", "DESC"]],
+      });
+      return onSuccess(res, 200, "Groups Successfully found", groups);
+    } catch (err) {
+      return onServerError(res, err);
+    }
+  }
+
   static async update(req, res) {
     try {
       const { group_id } = req.params;
       const group = await db.group_meta.findOne({
         where: { group_id },
-        include: [
-          {
-            model: db.group_members,
-            as: "members",
-          },
-          {
-            model: db.group_reasons,
-            as: "reasons",
-          },
-        ],
       });
       if (!group) return onError(res, 404, "group not found");
       group.update(req.body);
       return onSuccess(res, 200, "Group updated Successfully", group);
+    } catch (err) {
+      return onServerError(res, err);
+    }
+  }
+
+  static async updateMigratedGroups(req, res) {
+    try {
+      const { groups } = req.body;
+      if (!groups || groups.length < 1)
+        return onError(res, 404, "Provide an array of groups to update");
+
+      const updatedGroups = await db.group_meta.bulkCreate(
+        groups.map((row) => {
+          row.date_created = new Date();
+          row.production_group_id = row.group_id;
+          row.group_id = row.stagging_group_id;
+          row.group_code = row.group_code;
+          // row.group_status = "migrated";
+          return row;
+        }),
+        {
+          updateOnDuplicate: [
+            // "group_status",
+            "group_code",
+            "production_group_id",
+          ],
+        }
+      );
+      return onSuccess(res, 200, "Groups updated Successfully", updatedGroups);
     } catch (err) {
       return onServerError(res, err);
     }

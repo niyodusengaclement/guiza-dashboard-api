@@ -51,6 +51,10 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: true,
         defaultValue: 0,
       },
+      production_group_id: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+      },
     },
     {
       sequelize,

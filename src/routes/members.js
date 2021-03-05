@@ -21,6 +21,8 @@ routes
   .delete(auth.checkToken, MembersController.delete);
 
 routes.get("/search", auth.checkToken, MembersController.search);
+routes.get("/migrate", auth.checkToken, MembersController.migrate);
+
 routes.post(
   "/upload/:group_id([0-9]{1,10})",
   auth.checkToken,

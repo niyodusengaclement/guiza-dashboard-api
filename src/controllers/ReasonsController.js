@@ -39,6 +39,15 @@ class ReasonsController {
     }
   }
 
+  static async migrate(req, res) {
+    try {
+      const reasons = await db.group_reasons.findAll();
+      return onSuccess(res, 200, "Reasons Successfully found", reasons);
+    } catch (err) {
+      return onServerError(res, err);
+    }
+  }
+
   static async findOne(req, res) {
     try {
       const { reason_id } = req.params;

@@ -99,6 +99,15 @@ class membersController {
     }
   }
 
+  static async migrate(req, res) {
+    try {
+      const members = await db.group_members.findAll();
+      return onSuccess(res, 200, "Members Successfully found", members);
+    } catch (err) {
+      return onServerError(res, err);
+    }
+  }
+
   static async findOne(req, res) {
     try {
       const { member_id } = req.params;

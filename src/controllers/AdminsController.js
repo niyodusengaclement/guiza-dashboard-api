@@ -54,6 +54,17 @@ class AdminsController {
     }
   }
 
+  static async migrate(req, res) {
+    try {
+      const reasons = await db.Admin.findAll({
+        group: ["phone_number", "group_id"],
+      });
+      return onSuccess(res, 200, "Admins Successfully found", reasons);
+    } catch (err) {
+      return onServerError(res, err);
+    }
+  }
+
   static async delete(req, res) {
     try {
       const { admin_id } = req.params;

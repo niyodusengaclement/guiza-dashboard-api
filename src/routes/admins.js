@@ -8,14 +8,10 @@ const routes = express.Router();
 routes
   .route("/")
   .get(auth.checkToken, AdminsController.findGroupAdmins)
-  .post(
-    auth.checkToken,
-    UserValidations.admin,
-    AdminsController.create
-  );
+  .post(auth.checkToken, UserValidations.admin, AdminsController.create);
 
-routes
-  .route("/:admin_id")
-  .delete(auth.checkToken, AdminsController.delete);
+routes.get("/migrate", auth.checkToken, AdminsController.migrate);
+
+routes.route("/:admin_id").delete(auth.checkToken, AdminsController.delete);
 
 export default routes;
