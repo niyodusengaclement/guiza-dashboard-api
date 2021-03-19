@@ -14,6 +14,10 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         primaryKey: true,
       },
+      member_number: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       group_id: {
         type: DataTypes.BIGINT,
         allowNull: true,
@@ -50,6 +54,10 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.TINYINT,
         allowNull: true,
         defaultValue: 0,
+      },
+      production_group_id: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
       },
     },
     {

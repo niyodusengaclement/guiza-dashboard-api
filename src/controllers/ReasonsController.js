@@ -1,5 +1,5 @@
 import { onError, onServerError, onSuccess } from "../utils/response";
-import db from "../database/models";
+import db, { sequelize } from "../database/models";
 
 class ReasonsController {
   static async findAll(req, res) {
@@ -34,6 +34,18 @@ class ReasonsController {
       const reason = await db.group_reasons.create(req.body);
       if (!reason) return onServerError(res);
       return onSuccess(res, 201, "Created Successfully", reason);
+    } catch (err) {
+      return onServerError(res, err);
+    }
+  }
+
+  static async migrate(req, res) {
+    try {
+      const reasons = await sequelize.query(
+        'SELECT group_reasons.* FROM group_reasons, group_meta WHERE group_reasons.group_id=group_meta.group_id AND group_meta.group_status="new" AND group_meta.production_group_id IS NULL ',
+        { type: sequelize.QueryTypes.SELECT }
+      );
+      return onSuccess(res, 200, "Reasons Successfully found", reasons);
     } catch (err) {
       return onServerError(res, err);
     }

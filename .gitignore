@@ -3,4 +3,5 @@ node_modules
 .vscode
 .env
 tmp/
+build/
 src/config/googleLogger.config.json

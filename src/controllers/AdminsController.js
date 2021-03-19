@@ -1,5 +1,5 @@
 import { onError, onServerError, onSuccess } from "../utils/response";
-import db from "../database/models";
+import db, { sequelize } from "../database/models";
 
 class AdminsController {
   static async findGroupAdmins(req, res) {
@@ -50,6 +50,18 @@ class AdminsController {
     } catch (err) {
       if (err.name === "SequelizeUniqueConstraintError")
         return onError(res, 409, "Admin already exists");
+      return onServerError(res, err);
+    }
+  }
+
+  static async migrate(req, res) {
+    try {
+      const admins = await sequelize.query(
+        'SELECT Admins.* FROM Admins, group_meta WHERE Admins.group_id=group_meta.group_id AND group_meta.group_status="new" AND group_meta.production_group_id IS NULL GROUP BY Admins.phone_number, Admins.group_id',
+        { type: sequelize.QueryTypes.SELECT }
+      );
+      return onSuccess(res, 200, "Admins Successfully found", admins);
+    } catch (err) {
       return onServerError(res, err);
     }
   }

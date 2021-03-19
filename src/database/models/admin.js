@@ -21,12 +21,21 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.STRING,
     },
+    production_group_id: {
+      type: DataTypes.BIGINT,
+      allowNull: true,
+    },
   });
 
   Admin.associate = (models) => {
     Admin.belongsTo(models.group_members, {
       as: "user",
       foreignKey: "phone_number",
+      hooks: true,
+    });
+    Admin.belongsTo(models.group_meta, {
+      as: "admins",
+      foreignKey: "group_id",
       hooks: true,
     });
   };

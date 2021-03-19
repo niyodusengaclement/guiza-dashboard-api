@@ -105,6 +105,10 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(255),
         allowNull: true,
       },
+      production_group_id: {
+        type: DataTypes.BIGINT,
+        allowNull: true,
+      },
     },
     {
       sequelize,
@@ -158,6 +162,12 @@ module.exports = function (sequelize, DataTypes) {
     });
     group_meta.hasMany(models.Approval, {
       as: "approvals",
+      foreignKey: "group_id",
+      onDelete: "cascade",
+      hooks: true,
+    });
+    group_meta.hasMany(models.Admin, {
+      as: "admins",
       foreignKey: "group_id",
       onDelete: "cascade",
       hooks: true,

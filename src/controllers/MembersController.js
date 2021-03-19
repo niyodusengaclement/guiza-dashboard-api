@@ -1,7 +1,7 @@
 import fs from "fs";
 import readXlsxFile from "read-excel-file/node";
 import { onError, onServerError, onSuccess } from "../utils/response";
-import db from "../database/models";
+import db, { sequelize } from "../database/models";
 import { Op } from "sequelize";
 import MembersValidations from "../validations/MembersValidations";
 
@@ -14,7 +14,7 @@ class membersController {
 
       const members = await db.group_members.findAndCountAll({
         where: { group_id },
-        order: [["member_id", "DESC"]],
+        order: [["member_number", "ASC"]],
         offset,
         limit,
       });
@@ -44,7 +44,7 @@ class membersController {
           [Op.and]: [{ group_id }],
           [Op.or]: [
             {
-              member_id: {
+              member_number: {
                 [Op.substring]: searchHint,
               },
             },
@@ -70,7 +70,7 @@ class membersController {
             },
           ],
         },
-        order: [["member_id", "DESC"]],
+        order: [["member_number", "ASC"]],
         offset,
         limit,
       });
@@ -83,7 +83,7 @@ class membersController {
         itemsPerPage: limit,
         rows: groups.rows,
       };
-      return onSuccess(res, 200, "Groups Successfully found", results);
+      return onSuccess(res, 200, "Members Successfully found", results);
     } catch (err) {
       return onServerError(res, err);
     }
@@ -94,6 +94,18 @@ class membersController {
       const member = await db.group_members.create(req.body);
       if (!member) return onServerError(res);
       return onSuccess(res, 201, "member Created Successfully", member);
+    } catch (err) {
+      return onServerError(res, err);
+    }
+  }
+
+  static async migrate(req, res) {
+    try {
+      const members = await sequelize.query(
+        'SELECT group_members.* FROM group_members, group_meta WHERE group_members.group_id=group_meta.group_id AND group_meta.group_status="new" AND group_meta.production_group_id IS NULL ',
+        { type: sequelize.QueryTypes.SELECT }
+      );
+      return onSuccess(res, 200, "Members Successfully found", members);
     } catch (err) {
       return onServerError(res, err);
     }
@@ -175,6 +187,45 @@ class membersController {
           409,
           "This file contains One or more phone number already exists in this group"
         );
+      return onServerError(res, err);
+    }
+  }
+
+  static async updateMemberNumber(req, res) {
+    try {
+      const members = [];
+      const groups = await db.group_meta.findAll({
+        attributes: ["group_code", "group_name"],
+        include: [
+          {
+            model: db.group_members,
+            separate: true,
+            as: "members",
+            attributes: [
+              "member_id",
+              "member_number",
+              "first_name",
+              "production_group_id",
+            ],
+          },
+        ],
+      });
+      if (groups.length < 1) return onError(res, 404, "groups not found");
+      for (const group of groups) {
+        group.members.map((row, i) => {
+          const mbr = {
+            ...row.dataValues,
+            member_number: i + 1,
+          };
+          members.push(mbr);
+        });
+      }
+
+      const updatedMbrs = await db.group_members.bulkCreate(members, {
+        updateOnDuplicate: ["member_number"],
+      });
+      return onSuccess(res, 200, "member updated Successfully", updatedMbrs);
+    } catch (err) {
       return onServerError(res, err);
     }
   }

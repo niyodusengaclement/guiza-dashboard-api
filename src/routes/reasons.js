@@ -10,6 +10,8 @@ routes
   .get(auth.checkToken, ReasonsController.findAll)
   .post(auth.checkToken, ReasonsValidations.reason, ReasonsController.create);
 
+routes.route("/migrate").get(auth.checkToken, ReasonsController.migrate);
+
 routes
   .route("/:reason_id")
   .get(auth.checkToken, ReasonsController.findOne)
