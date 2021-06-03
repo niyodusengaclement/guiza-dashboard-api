@@ -9,7 +9,8 @@ const routes = express.Router();
 routes
   .route("/")
   .get(auth.checkToken, GroupsController.findAll)
-  .post(auth.checkToken, GroupValidations.group, GroupsController.create);
+  .post(auth.checkToken, GroupValidations.group, GroupsController.create)
+  .patch(auth.checkToken, GroupsController.villageUpdater);
 
 routes
   .route("/:group_id([0-9]{1,10})")
@@ -22,6 +23,7 @@ routes
   .route("/migrate")
   .get(auth.checkToken, GroupsController.migrate)
   .post(auth.checkToken, GroupsController.updateMigratedGroups);
+
 routes.post(
   "/upload",
   auth.checkToken,

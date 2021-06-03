@@ -4,7 +4,7 @@ import {
   onSuccess,
   logMultipleErrors,
 } from "../utils/response";
-import db from "../database/models";
+import db, { sequelize } from "../database/models";
 import { Op } from "sequelize";
 import readMembersSheet from "../services/readMembersSheet";
 import readCommitteeSheet from "../services/readCommitteeSheet";
@@ -12,6 +12,7 @@ import readRulesSheet from "../services/readRulesSheet";
 import helpers from "../utils/helpers";
 import createGroup from "../services/createGroup";
 import updateProductionGroupIDs from "../services/updateProductionGroupIDs";
+import villageFinder from "../services/villageFinder";
 
 class GroupsController {
   static async findAll(req, res) {
@@ -267,9 +268,11 @@ class GroupsController {
         filePath
       );
 
-      const { reasons, savingInfo, error: rulesError } = await readRulesSheet(
-        filePath
-      );
+      const {
+        reasons,
+        savingInfo,
+        error: rulesError,
+      } = await readRulesSheet(filePath);
       if (membersError || committeeError || rulesError) {
         helpers.deleteTmpFile(filePath);
         logMultipleErrors(
@@ -300,6 +303,32 @@ class GroupsController {
           409,
           "This file contains One or more phone number already exists in this group"
         );
+      return onServerError(res, err);
+    }
+  }
+
+  static async villageUpdater(req, res) {
+    try {
+      const villageUpdate = await sequelize.query(
+        "UPDATE group_meta as grp INNER JOIN sm_geolocation AS geo ON geo.district_name LIKE CONCAT('%', TRIM(grp.district), '%') AND geo.sector_name LIKE CONCAT('%', TRIM(grp.sector), '%') AND geo.cell_name LIKE CONCAT('%', TRIM(grp.cell), '%') AND geo.village_name LIKE CONCAT('%', TRIM(grp.village), '%') SET grp.village_id=geo.village_id WHERE grp.village_id IS NULL OR grp.village_id = 0",
+        { type: sequelize.QueryTypes.UPDATE }
+      );
+
+      const districtUpdate = await sequelize.query(
+        "UPDATE group_meta as grp INNER JOIN sm_geolocation AS geo ON geo.district_name LIKE CONCAT('%', TRIM(grp.district), '%') SET grp.village_id=geo.district_id WHERE grp.village_id IS NULL OR grp.village_id = 0",
+        { type: sequelize.QueryTypes.UPDATE }
+      );
+
+      const unpdatedGroups = await db.group_meta.findAll({
+        where: { village_id: null },
+      });
+
+      return onSuccess(res, 200, "group Successfully updated", {
+        districtUpdate: districtUpdate[1],
+        villageUpdate: villageUpdate[1],
+        unpdatedGroups: unpdatedGroups?.length,
+      });
+    } catch (err) {
       return onServerError(res, err);
     }
   }

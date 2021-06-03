@@ -8,29 +8,29 @@ export default async (payload) => {
         [Op.and]: [
           {
             district_name: {
-              [Op.substring]: payload.district,
+              [Op.substring]: payload?.district?.trim(),
             },
           },
           {
             sector_name: {
-              [Op.substring]: payload.sector,
+              [Op.substring]: payload?.sector?.trim(),
             },
           },
           {
             cell_name: {
-              [Op.substring]: payload.cell,
+              [Op.substring]: payload?.cell?.trim(),
             },
           },
           {
             village_name: {
-              [Op.substring]: payload.village,
+              [Op.substring]: payload?.village?.trim(),
             },
           },
         ],
       },
     });
     if (response && response.dataValues) {
-      return response.dataValues.village_id;
+      return response?.dataValues?.village_id;
     }
     return null;
   } catch (error) {
