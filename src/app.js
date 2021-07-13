@@ -16,7 +16,9 @@ app.use(compression());
 app.use(cors());
 app.use(morgan("combined"));
 app.use(cookieParser());
-app.use(express.urlencoded({ limit: "50mb", extended: true,  parameterLimit:50000 }));
+app.use(
+  express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 })
+);
 app.use(express.json({ limit: "50mb" }));
 app.use(
   fileupload({
@@ -26,7 +28,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.send("Welcome to GWIZA API");
+  res.send("Welcome to GWIZA STAGING API");
 });
 
 app.use("/api", routes);
